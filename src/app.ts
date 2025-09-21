@@ -24,10 +24,14 @@ app.use(
 app.use(express.json())
 
 // health check
-app.get('/', (req: Request, res: Response) => {
-  res.status(200).json({
-    'health-check': "working! let's build something awesome.",
-  })
+// app.get('/', (req: Request, res: Response) => {
+//   res.status(200).json({
+//     'health-check': "working! let's build something awesome.",
+//   })
+// })
+
+app.get('/health', async (req: Request, res: Response) => {
+  res.json({ status: 'ok' })
 })
 
 app.use('/v1/', routes)
