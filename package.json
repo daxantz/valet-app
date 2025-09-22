@@ -4,7 +4,7 @@
   "description": "Express + TypeScript + Prisma + Postgres starter",
   "main": "dist/server.js",
   "scripts": {
-    "dev": "nodemon src/server.ts | npx pino-pretty",
+    "dev": "nodemon --watch 'src/**/*.ts' --legacy-watch src/server.ts | npx pino-pretty",
     "start": "node dist/src/server.js | npx pino-pretty",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
