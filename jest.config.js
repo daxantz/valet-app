@@ -15,4 +15,4 @@ const config = {
   clearMocks: true, // auto-clear mocks between tests
 }
 
-export default config
+module.exports = config
