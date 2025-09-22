@@ -1,0 +1,47 @@
+version: '3.9'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: valet_app
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    container_name: valet_db
+    restart: always
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: daxantz
+      POSTGRES_PASSWORD: Maxbenny2497!
+      POSTGRES_DB: valet-db
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  test-db:
+    image: postgres:15
+    container_name: valet_test_db
+    restart: always
+    ports:
+      - '5433:5432' # use different port for test db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Callofduty2497
+      POSTGRES_DB: valetapptest
+    volumes:
+      - test_db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
+  test_db_data:
