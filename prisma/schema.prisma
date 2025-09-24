@@ -14,6 +14,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum CarStatus {
+  PARKED
+  REQUESTED
+  READY
+  CHECKED_OUT
+}
 
 
 model Test {
@@ -21,3 +27,47 @@ model Test {
   name  String
   value Int
 }
+
+model Location {
+  id        Int      @id @default(autoincrement())
+  name      String
+  entrances Entrance[]
+}
+
+model Entrance {
+  id         Int      @id @default(autoincrement())
+  name       String
+  location   Location @relation(fields: [locationId], references: [id])
+  locationId Int
+}
+
+model Employee{
+  id        Int      @id @default(autoincrement())
+  name      String
+  pin       String  @unique
+  ParkedCars     Car[] @relation("ParkedCars")
+  CheckedOutCars Car[] @relation("CheckedOutCars")
+}
+
+model Car {
+  id             Int       @id @default(autoincrement())
+  ticket         String    @unique
+  phoneNumber    String
+  make           String
+  model          String
+  color          String
+  status         CarStatus @default(PARKED)
+  requestedAt    DateTime?
+  readyAt        DateTime?
+  checkedOutAt   DateTime?
+
+  parkedById     Int?
+  parkedBy       Employee? @relation("ParkedCars", fields: [parkedById], references: [id], onDelete: SetNull)
+
+  checkedOutById Int?
+  checkedOutBy   Employee? @relation("CheckedOutCars", fields: [checkedOutById], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+updatedAt DateTime @updatedAt
+}
+
