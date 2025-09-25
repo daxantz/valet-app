@@ -34,7 +34,7 @@ app.get('/health', async (req: Request, res: Response) => {
   res.json({ status: 'ok' })
 })
 
-app.use('/v1/', routes)
+app.use('/v1', routes)
 
 // Handle unknown endpoints
 app.use('*', unknownEndpoint)
