@@ -19,7 +19,7 @@ export const getAllLocations = async () => {
   })
 }
 
-export const updateLocation = async (id: number, name: string) => {
+export const updateLocationName = async (id: number, name: string) => {
   return prisma.location.update({
     where: { id },
     data: { name },

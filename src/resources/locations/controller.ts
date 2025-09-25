@@ -1,5 +1,11 @@
 import { Request, Response, NextFunction } from 'express'
-import { createLocation, deleteLocation, getAllLocations, getLocationById } from '../../services/locationService'
+import {
+  createLocation,
+  deleteLocation,
+  getAllLocations,
+  getLocationById,
+  updateLocationName,
+} from '../../services/locationService'
 
 const getAll = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -69,10 +75,34 @@ const getSingleLocation = async (req: Request, res: Response, next: NextFunction
     next(error)
   }
 }
+
+const updateLocation = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params
+    const { name } = req.body
+    if (!id) {
+      return res.status(400).json({ error: 'ID was not provided' })
+    }
+    if (!req.body.name) {
+      return res.status(400).json({ error: 'Name is required' })
+    }
+
+    const updatedLocation = await updateLocationName(parseInt(id), name)
+    if (!updatedLocation) {
+      return res.status(404).json({ message: 'Location not found' })
+    }
+    // logic to update a location by id
+    res.status(200).json({ message: 'Location updated successfully', location: updatedLocation })
+  } catch (error) {
+    next(error)
+  }
+}
+
 export default {
   getAll,
   makeLocation,
   removeLocation,
   getLocations,
   getSingleLocation,
+  updateLocation,
 }

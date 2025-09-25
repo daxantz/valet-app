@@ -52,3 +52,21 @@ test('GET /v1/location/:id retrieves a single location', async () => {
   expect(res.body.location).toHaveProperty('id', newLocation.id)
   expect(res.body.location).toHaveProperty('name', 'Single Location')
 })
+
+test('PUT /v1/location/:id updates a location name', async () => {
+  // First, create a location to update
+  const newLocation = await prisma.location.create({ data: { name: 'Old Location Name' } })
+
+  const res = await request(app).put(`/v1/location/${newLocation.id}`).send({ name: 'Updated Location Name' })
+
+  expect(res.status).toBe(200)
+  expect(res.body).toHaveProperty('message', 'Location updated successfully')
+  expect(res.body).toHaveProperty('location')
+  expect(res.body.location).toHaveProperty('id', newLocation.id)
+  expect(res.body.location).toHaveProperty('name', 'Updated Location Name')
+
+  // Verify the update in the DB
+  const locationInDb = await prisma.location.findUnique({ where: { id: newLocation.id } })
+  expect(locationInDb).not.toBeNull()
+  expect(locationInDb?.name).toBe('Updated Location Name')
+})
