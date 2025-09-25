@@ -26,3 +26,29 @@ test('DELETE /v1/location/:id deletes a location', async () => {
   const locationInDb = await prisma.location.findUnique({ where: { id: newLocation.id } })
   expect(locationInDb).toBeNull()
 })
+
+test('GET /v1/location retrieves all locations', async () => {
+  // Create some locations to retrieve
+  await prisma.location.createMany({
+    data: [{ name: 'Location 1' }, { name: 'Location 2' }],
+  })
+
+  const res = await request(app).get('/v1/location')
+
+  expect(res.status).toBe(200)
+  expect(res.body).toHaveProperty('locations')
+  expect(Array.isArray(res.body.locations)).toBe(true)
+  expect(res.body.locations.length).toBeGreaterThanOrEqual(2) // At least the two we just created
+})
+
+test('GET /v1/location/:id retrieves a single location', async () => {
+  // First, create a location to retrieve
+  const newLocation = await prisma.location.create({ data: { name: 'Single Location' } })
+
+  const res = await request(app).get(`/v1/location/${newLocation.id}`)
+
+  expect(res.status).toBe(200)
+  expect(res.body).toHaveProperty('location')
+  expect(res.body.location).toHaveProperty('id', newLocation.id)
+  expect(res.body.location).toHaveProperty('name', 'Single Location')
+})

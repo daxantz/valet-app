@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import { createLocation, deleteLocation } from '../../services/locationService'
+import { createLocation, deleteLocation, getAllLocations, getLocationById } from '../../services/locationService'
 
 const getAll = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -38,8 +38,41 @@ const removeLocation = async (req: Request, res: Response, next: NextFunction) =
     next(error)
   }
 }
+
+const getLocations = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const locations = await getAllLocations()
+
+    if (!locations || locations.length === 0) {
+      return res.status(404).json({ message: 'No locations found' })
+    }
+    // logic to get all locations
+    res.status(200).json({ message: 'Retrieved all locations', locations: locations })
+  } catch (error) {
+    next(error)
+  }
+}
+
+const getSingleLocation = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params
+    if (!id) {
+      return res.status(400).json({ error: 'Could not find this location' })
+    }
+    const location = await getLocationById(parseInt(id))
+    if (!location) {
+      return res.status(404).json({ message: 'Location not found' })
+    }
+    // logic to get a single location by id
+    res.status(200).json({ message: `Retrieved location with id: ${id}`, location: location })
+  } catch (error) {
+    next(error)
+  }
+}
 export default {
   getAll,
   makeLocation,
   removeLocation,
+  getLocations,
+  getSingleLocation,
 }
