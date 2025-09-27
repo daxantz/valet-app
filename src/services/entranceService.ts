@@ -4,10 +4,11 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 // Get all entrances
-export const getAllEntrances = async () => {
+export const getAllEntrancesByLocation = async (locationId: number) => {
   return prisma.entrance.findMany({
+    where: { locationId },
     include: {
-      location: true, // include related Location
+      location: true,
     },
   })
 }
