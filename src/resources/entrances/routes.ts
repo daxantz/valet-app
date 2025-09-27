@@ -1,12 +1,12 @@
 import { Router } from 'express'
 import entranceController from './controller'
 
-const router = Router()
+const router = Router({ mergeParams: true })
 
 // define routes
-router.post('/locations/:locationId/entrance', entranceController.makeEntrance)
+router.post('/', entranceController.makeEntrance)
 // router.delete('/:id', locationController.removeLocation)
-// router.get('/', locationController.getLocations)
+router.get('/', entranceController.getEntrancesByLocation)
 // router.get('/:id', locationController.getSingleLocation)
 // router.put('/:id', locationController.updateLocation)
 export default router
