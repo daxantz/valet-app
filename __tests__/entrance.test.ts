@@ -40,3 +40,18 @@ test('GET /v1/location/:locationId/entrance retrieves entrances by location', as
   expect(res.body.entrances[0]).toHaveProperty('name')
   expect(res.body.entrances[0]).toHaveProperty('locationId', location.id)
 })
+
+test('DELETE /v1/location/:locationId/entrance/:id deletes an entrance', async () => {
+  // Create a location and an entrance
+  const location = await prisma.location.create({ data: { name: 'Delete Location' } })
+  const entrance = await prisma.entrance.create({ data: { name: 'To Be Deleted', locationId: location.id } })
+
+  const res = await request(app).delete(`/v1/location/${location.id}/entrance/${entrance.id}`)
+
+  expect(res.status).toBe(200)
+  expect(res.body).toHaveProperty('message', `Delete entrance:  ${entrance.id} `)
+
+  // Verify it's deleted from the DB
+  const entranceInDb = await prisma.entrance.findUnique({ where: { id: entrance.id } })
+  expect(entranceInDb).toBeNull()
+})

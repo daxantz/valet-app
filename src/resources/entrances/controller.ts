@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import { createEntrance, getAllEntrancesByLocation } from '../../services/entranceService'
+import { createEntrance, deleteEntranceById, getAllEntrancesByLocation } from '../../services/entranceService'
 
 const makeEntrance = async (req: Request, res: Response, next: NextFunction) => {
   console.log('Request body:', req.params, req.body)
@@ -26,7 +26,26 @@ const getEntrancesByLocation = async (req: Request, res: Response, next: NextFun
     }
 
     const entrances = await getAllEntrancesByLocation(parseInt(locationId))
-    res.status(200).json({ message: 'Get all entrances - not implemented yet', entrances: entrances })
+    res.status(200).json({ message: 'Get all entrances ', entrances: entrances })
+  } catch (error) {
+    next(error)
+  }
+}
+
+const deleteEntrance = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params
+    if (!id) {
+      return res.status(400).json({ error: 'Entrance ID is required' })
+    }
+
+    const entrance = await deleteEntranceById(parseInt(id))
+
+    if (!entrance) {
+      return res.status(404).json({ error: 'Entrance not found' })
+    }
+    // logic to delete an entrance
+    res.status(200).json({ message: `Delete entrance:  ${id} `, entrance: entrance })
   } catch (error) {
     next(error)
   }
@@ -34,4 +53,5 @@ const getEntrancesByLocation = async (req: Request, res: Response, next: NextFun
 export default {
   makeEntrance,
   getEntrancesByLocation,
+  deleteEntrance,
 }

@@ -51,7 +51,7 @@ export const updateEntrance = async (id: number, name: string, locationId: numbe
 }
 
 // Delete an entrance
-export const deleteEntrance = async (id: number) => {
+export const deleteEntranceById = async (id: number) => {
   return prisma.entrance.delete({
     where: { id },
   })
