@@ -71,3 +71,17 @@ test('PUT /v1/location/:locationId/entrance/:id updates an entrance', async () =
   expect(entranceInDb).not.toBeNull()
   expect(entranceInDb?.name).toBe('New Name')
 })
+
+test('GET /v1/location/:locationId/entrance/:id retrieves a single entrance', async () => {
+  // Create a location and an entrance
+  const location = await prisma.location.create({ data: { name: 'Single Location' } })
+  const entrance = await prisma.entrance.create({ data: { name: 'Unique Entrance', locationId: location.id } })
+
+  const res = await request(app).get(`/v1/location/${location.id}/entrance/${entrance.id}`)
+
+  expect(res.status).toBe(200)
+  expect(res.body).toHaveProperty('entrance')
+  expect(res.body.entrance).toHaveProperty('id', entrance.id)
+  expect(res.body.entrance).toHaveProperty('name', 'Unique Entrance')
+  expect(res.body.entrance).toHaveProperty('locationId', location.id)
+})

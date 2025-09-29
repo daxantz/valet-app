@@ -4,6 +4,7 @@ import {
   deleteEntranceById,
   getAllEntrancesByLocation,
   updateEntrance as changeEntrance,
+  getEntranceById,
 } from '../../services/entranceService'
 
 const makeEntrance = async (req: Request, res: Response, next: NextFunction) => {
@@ -31,6 +32,25 @@ const getEntrancesByLocation = async (req: Request, res: Response, next: NextFun
 
     const entrances = await getAllEntrancesByLocation(parseInt(locationId))
     res.status(200).json({ message: 'Get all entrances ', entrances: entrances })
+  } catch (error) {
+    next(error)
+  }
+}
+
+const getSingleEntrance = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params
+    if (!id) {
+      return res.status(400).json({ error: 'Entrance ID is required' })
+    }
+
+    const entrance = await getEntranceById(parseInt(id))
+
+    if (!entrance) {
+      return res.status(404).json({ error: 'Entrance not found' })
+    }
+    // logic to get a single entrance
+    res.status(200).json({ message: 'Get single entrance ', entrance: entrance })
   } catch (error) {
     next(error)
   }
@@ -79,4 +99,5 @@ export default {
   getEntrancesByLocation,
   deleteEntrance,
   updateEntrance,
+  getSingleEntrance,
 }
