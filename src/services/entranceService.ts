@@ -37,12 +37,11 @@ export const createEntrance = async (name: string, locationId: number) => {
 }
 
 // Update an entrance
-export const updateEntrance = async (id: number, name: string, locationId: number) => {
+export const updateEntrance = async (id: number, name: string) => {
   return prisma.entrance.update({
     where: { id },
     data: {
       name,
-      locationId,
     },
     include: {
       location: true,
