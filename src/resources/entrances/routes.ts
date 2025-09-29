@@ -8,5 +8,5 @@ router.post('/', entranceController.makeEntrance)
 router.delete('/:id', entranceController.deleteEntrance)
 router.get('/', entranceController.getEntrancesByLocation)
 // router.get('/:id', locationController.getSingleLocation)
-// router.put('/:id', locationController.updateLocation)
+router.put('/:id', entranceController.updateEntrance)
 export default router

@@ -1,8 +1,12 @@
 import { Request, Response, NextFunction } from 'express'
-import { createEntrance, deleteEntranceById, getAllEntrancesByLocation } from '../../services/entranceService'
+import {
+  createEntrance,
+  deleteEntranceById,
+  getAllEntrancesByLocation,
+  updateEntrance as changeEntrance,
+} from '../../services/entranceService'
 
 const makeEntrance = async (req: Request, res: Response, next: NextFunction) => {
-  console.log('Request body:', req.params, req.body)
   try {
     const { name } = req.body
     const { locationId } = req.params
@@ -50,8 +54,29 @@ const deleteEntrance = async (req: Request, res: Response, next: NextFunction) =
     next(error)
   }
 }
+
+const updateEntrance = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params
+    const { name } = req.body
+
+    if (!id || !name) {
+      return res.status(400).json({ error: 'Entrance ID and Name are required' })
+    }
+    const entrance = await changeEntrance(parseInt(id), name)
+    if (!entrance) {
+      return res.status(404).json({ error: 'Entrance not found' })
+    }
+    // logic to update an entrance
+    res.status(200).json({ message: `Update Entrance: ${name}` })
+  } catch (error) {
+    next(error)
+  }
+}
+
 export default {
   makeEntrance,
   getEntrancesByLocation,
   deleteEntrance,
+  updateEntrance,
 }

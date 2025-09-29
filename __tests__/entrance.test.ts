@@ -55,3 +55,19 @@ test('DELETE /v1/location/:locationId/entrance/:id deletes an entrance', async (
   const entranceInDb = await prisma.entrance.findUnique({ where: { id: entrance.id } })
   expect(entranceInDb).toBeNull()
 })
+
+test('PUT /v1/location/:locationId/entrance/:id updates an entrance', async () => {
+  // Create a location and an entrance
+  const location = await prisma.location.create({ data: { name: 'Update Location' } })
+  const entrance = await prisma.entrance.create({ data: { name: 'Old Name', locationId: location.id } })
+
+  const res = await request(app).put(`/v1/location/${location.id}/entrance/${entrance.id}`).send({ name: 'New Name' })
+
+  expect(res.status).toBe(200)
+  expect(res.body).toHaveProperty('message', `Update Entrance: New Name`)
+
+  // Verify it's updated in the DB
+  const entranceInDb = await prisma.entrance.findUnique({ where: { id: entrance.id } })
+  expect(entranceInDb).not.toBeNull()
+  expect(entranceInDb?.name).toBe('New Name')
+})
