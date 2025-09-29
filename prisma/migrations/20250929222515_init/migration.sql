@@ -23,6 +23,7 @@ CREATE TABLE "public"."Employee" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "pin" TEXT NOT NULL,
+    "locationId" INTEGER NOT NULL,
 
     CONSTRAINT "Employee_pkey" PRIMARY KEY ("id")
 );
@@ -55,6 +56,9 @@ CREATE UNIQUE INDEX "Car_ticket_key" ON "public"."Car"("ticket");
 
 -- AddForeignKey
 ALTER TABLE "public"."Entrance" ADD CONSTRAINT "Entrance_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "public"."Location"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."Employee" ADD CONSTRAINT "Employee_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "public"."Location"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."Car" ADD CONSTRAINT "Car_parkedById_fkey" FOREIGN KEY ("parkedById") REFERENCES "public"."Employee"("id") ON DELETE SET NULL ON UPDATE CASCADE;
