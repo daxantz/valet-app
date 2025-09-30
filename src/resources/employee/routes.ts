@@ -6,7 +6,7 @@ const router = Router({ mergeParams: true })
 // define routes
 router.post('/', employeeController.makeEmployee)
 // router.delete('/:id', entranceController.deleteEntrance)
-// router.get('/', entranceController.getEntrancesByLocation)
+router.get('/', employeeController.getEmployees)
 // router.get('/:id', entranceController.getSingleEntrance)
 // router.put('/:id', entranceController.updateEntrance)
 export default router

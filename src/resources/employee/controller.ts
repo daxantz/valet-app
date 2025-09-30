@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import { createEmployee } from '../../services/employeeService'
 import prisma from '../../services/prisma'
+
 const makeEmployee = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { name, pin } = req.body
@@ -24,4 +25,17 @@ const makeEmployee = async (req: Request, res: Response, next: NextFunction) => 
   }
 }
 
-export default { makeEmployee }
+const getEmployees = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { locationId } = req.params
+    if (!locationId) {
+      return res.status(400).json({ error: 'Location ID is required' })
+    }
+    const employees = await prisma.employee.findMany({ where: { locationId: parseInt(locationId) } })
+    res.status(200).json({ message: `Retrieved all employees for location ${locationId}`, employees })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export default { makeEmployee, getEmployees }
