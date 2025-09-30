@@ -8,5 +8,5 @@ router.post('/', employeeController.makeEmployee)
 router.delete('/:employeeId', employeeController.removeEmployee)
 router.get('/', employeeController.getEmployees)
 router.get('/:employeeId', employeeController.getSingleEmployee)
-// router.put('/:id', entranceController.updateEntrance)
+router.put('/:employeeId', employeeController.updateEmployee)
 export default router

@@ -71,4 +71,37 @@ const removeEmployee = async (req: Request, res: Response, next: NextFunction) =
   }
 }
 
-export default { makeEmployee, getEmployees, getSingleEmployee, removeEmployee }
+const updateEmployee = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { employeeId } = req.params
+    const { updatedName, pin } = req.body
+
+    if (!employeeId) {
+      return res.status(400).json({ error: 'Employee ID is required' })
+    }
+
+    const existingEmployee = await getEmployeeById(parseInt(employeeId))
+    if (!existingEmployee) {
+      return res.status(404).json({ error: 'Employee not found' })
+    }
+
+    // If pin is being updated, check for uniqueness
+    if (pin && pin !== existingEmployee.pin) {
+      const pinConflict = await prisma.employee.findUnique({ where: { pin } })
+      if (pinConflict) {
+        return res.status(409).json({ error: 'An employee with this PIN already exists' })
+      }
+    }
+
+    const updatedEmployee = await prisma.employee.update({
+      where: { id: parseInt(employeeId) },
+      data: { name: updatedName || existingEmployee.name, pin: pin || existingEmployee.pin },
+    })
+
+    res.status(200).json({ message: `Updated employee ${employeeId}`, employee: updatedEmployee })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export default { makeEmployee, getEmployees, getSingleEmployee, removeEmployee, updateEmployee }

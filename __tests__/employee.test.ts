@@ -84,3 +84,26 @@ test('DELETE /v1/location/:locationId/employee/:id deletes an employee', async (
   const employeeInDb = await prisma.employee.findUnique({ where: { id: employee.id } })
   expect(employeeInDb).toBeNull()
 })
+
+test('PUT /v1/location/:locationId/employee/:id updates an employee', async () => {
+  // Create a location and an employee
+  const location = await prisma.location.create({ data: { name: 'Test Location - update employee' } })
+  const employee = await prisma.employee.create({
+    data: { name: 'Eve', pin: '5555', locationId: location.id },
+  })
+
+  const res = await request(app)
+    .put(`/v1/location/${location.id}/employee/${employee.id}`)
+    .send({ updatedName: 'Eve Updated', pin: '9999' })
+
+  expect(res.status).toBe(200)
+  expect(res.body).toHaveProperty('message', `Updated employee ${employee.id}`)
+  expect(res.body.employee).toHaveProperty('name', 'Eve Updated')
+  expect(res.body.employee).toHaveProperty('pin', '9999')
+
+  // Verify the updates in the DB
+  const employeeInDb = await prisma.employee.findUnique({ where: { id: employee.id } })
+  expect(employeeInDb).not.toBeNull()
+  expect(employeeInDb?.name).toBe('Eve Updated')
+  expect(employeeInDb?.pin).toBe('9999')
+})
