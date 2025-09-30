@@ -50,3 +50,19 @@ test('GET /v1/location/:locationId/employee retrieves employees for a location',
   expect(pins).toContain('1111')
   expect(pins).toContain('2222')
 })
+
+test('GET /v1/location/:locationId/employee/:id retrieves a single employee', async () => {
+  // Create a location and an employee
+  const location = await prisma.location.create({ data: { name: 'Test Location - get single employee' } })
+  const employee = await prisma.employee.create({
+    data: { name: 'Charlie', pin: '3333', locationId: location.id },
+  })
+
+  const res = await request(app).get(`/v1/location/${location.id}/employee/${employee.id}`)
+
+  expect(res.status).toBe(200)
+  expect(res.body).toHaveProperty('message', `Retrieved employee ${employee.id}`)
+  expect(res.body.employee).toHaveProperty('name', 'Charlie')
+  expect(res.body.employee).toHaveProperty('pin', '3333')
+  expect(res.body.employee).toHaveProperty('locationId', location.id)
+})

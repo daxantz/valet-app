@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import { createEmployee } from '../../services/employeeService'
+import { createEmployee, getEmployeeById } from '../../services/employeeService'
 import prisma from '../../services/prisma'
 
 const makeEmployee = async (req: Request, res: Response, next: NextFunction) => {
@@ -38,4 +38,21 @@ const getEmployees = async (req: Request, res: Response, next: NextFunction) => 
   }
 }
 
-export default { makeEmployee, getEmployees }
+const getSingleEmployee = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { employeeId } = req.params
+    if (!employeeId) {
+      return res.status(400).json({ error: 'Employee ID is required' })
+    }
+    const employee = await getEmployeeById(parseInt(employeeId))
+    if (!employee) {
+      return res.status(404).json({ error: 'Employee not found' })
+    }
+
+    res.status(200).json({ message: `Retrieved employee ${employeeId}`, employee })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export default { makeEmployee, getEmployees, getSingleEmployee }
