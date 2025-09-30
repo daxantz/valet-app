@@ -66,3 +66,21 @@ test('GET /v1/location/:locationId/employee/:id retrieves a single employee', as
   expect(res.body.employee).toHaveProperty('pin', '3333')
   expect(res.body.employee).toHaveProperty('locationId', location.id)
 })
+
+test('DELETE /v1/location/:locationId/employee/:id deletes an employee', async () => {
+  // Create a location and an employee
+  const location = await prisma.location.create({ data: { name: 'Test Location - delete employee' } })
+  const employee = await prisma.employee.create({
+    data: { name: 'Dave', pin: '4444', locationId: location.id },
+  })
+
+  const res = await request(app).delete(`/v1/location/${location.id}/employee/${employee.id}`)
+
+  expect(res.status).toBe(200)
+  expect(res.body).toHaveProperty('message', `Deleted employee ${employee.id}`)
+  expect(res.body.employee).toHaveProperty('id', employee.id)
+
+  // Verify it's deleted from the DB
+  const employeeInDb = await prisma.employee.findUnique({ where: { id: employee.id } })
+  expect(employeeInDb).toBeNull()
+})
