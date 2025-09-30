@@ -122,3 +122,11 @@ Create Express TypeScript Starter was created by [Wubshet Zeleke](https://linked
 
 ## License
 Create Express TypeScript Starter is licensed under the MIT License.
+
+
+
+## NOTES
+
+- this appication is an employee facing app/system so i think im going to make the decision to store pins as they are and not hashing them because
+there isnt any private data or information that could be used from the app. Creating an employee is simply to have their name in the app in order
+to track whos parking which ever cars 

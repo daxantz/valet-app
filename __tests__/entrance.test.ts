@@ -2,10 +2,10 @@ import request from 'supertest'
 import app from '../src/app'
 import prisma from '../src/services/prisma'
 
-beforeEach(async () => {
-  await prisma.entrance.deleteMany()
-  await prisma.location.deleteMany()
-})
+// beforeEach(async () => {
+//   await prisma.entrance.deleteMany()
+//   await prisma.location.deleteMany()
+// })
 
 test('POST /v1/location/:locationId/entrance creates a new entrance', async () => {
   // First, create a location to associate with the entrance
