@@ -2,6 +2,7 @@ import { Router } from 'express'
 import locationController from './controller'
 import entranceRouter from '../entrances/routes'
 import employeeRouter from '../employee/routes'
+import authRouter from '../auth/routes'
 const router = Router()
 
 // define routes
@@ -10,7 +11,7 @@ router.delete('/:id', locationController.removeLocation)
 router.get('/', locationController.getLocations)
 router.get('/:id', locationController.getSingleLocation)
 router.put('/:id', locationController.updateLocation)
-
+router.use('/:locationId/auth', authRouter)
 router.use('/:locationId/employee', employeeRouter)
 router.use('/:locationId/entrance', entranceRouter)
 
