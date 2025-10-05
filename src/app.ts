@@ -4,7 +4,7 @@ import helmet from 'helmet'
 import compression from 'compression'
 import routes from './common/routes'
 import unknownEndpoint from './middlewares/unknownEndpoint'
-
+import cookieParser from 'cookie-parser'
 // to use env variables
 import './common/env'
 
@@ -12,8 +12,12 @@ const app: Application = express()
 
 // middleware
 app.disable('x-powered-by')
-app.use(cors())
-app.use(helmet())
+app.use(cors({ credentials: true, origin: 'http://localhost:3000' }))
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false,
+  }),
+)
 app.use(compression())
 app.use(
   express.urlencoded({
@@ -22,6 +26,7 @@ app.use(
   }),
 )
 app.use(express.json())
+app.use(cookieParser())
 
 // health check
 // app.get('/', (req: Request, res: Response) => {
@@ -38,5 +43,10 @@ app.use('/v1', routes)
 
 // Handle unknown endpoints
 app.use('*', unknownEndpoint)
+
+app.use((err, req: Request, res: Response) => {
+  console.error(err)
+  res.status(500).json({ error: 'Something went wrong' })
+})
 
 export default app
