@@ -2,7 +2,7 @@ import request from 'supertest'
 import app from '../src/app'
 import prisma from '../src/services/prisma'
 import jwt from 'jsonwebtoken'
-import authMiddleware from '../src/middlewares/authenicated'
+import authenticate from '../src/middlewares/authenicated'
 
 import { Request, Response, NextFunction } from 'express'
 
@@ -70,7 +70,7 @@ describe('Auth Middleware', () => {
     }
     const next = jest.fn() as NextFunction
 
-    authMiddleware(req as Request, res as Response, next)
+    authenticate(req as Request, res as Response, next)
     expect(next).toHaveBeenCalled()
   })
 
@@ -82,7 +82,7 @@ describe('Auth Middleware', () => {
     } as Partial<Response>
     const next = jest.fn() as NextFunction
 
-    authMiddleware(req as Request, res as Response, next)
+    authenticate(req as Request, res as Response, next)
     expect(res.status).toHaveBeenCalledWith(401)
     expect(res.json).toHaveBeenCalledWith({ error: 'Invalid or expired token' })
     expect(next).not.toHaveBeenCalled()
@@ -96,7 +96,7 @@ describe('Auth Middleware', () => {
     } as Partial<Response>
     const next = jest.fn() as NextFunction
 
-    authMiddleware(req as Request, res as Response, next)
+    authenticate(req as Request, res as Response, next)
     expect(res.status).toHaveBeenCalledWith(401)
     expect(res.json).toHaveBeenCalledWith({ error: 'Invalid or expired token' })
     expect(next).not.toHaveBeenCalled()
