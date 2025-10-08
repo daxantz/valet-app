@@ -2,10 +2,15 @@ import { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
 import prisma from '../../services/prisma'
 
-const login = async (req: Request, res: Response, next: NextFunction) => {
+interface AuthenticatedRequest extends Request {
+  location?: string
+}
+
+const login = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const { locationId } = req.params
+    // const { locationId } = req.params
     const { pin } = req.body
+    const locationId = req.location
 
     if (!locationId) {
       return res.status(400).json({ error: 'Location ID is required' })
@@ -30,7 +35,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     }
 
     // Sign JWT synchronously (safe for small payloads)
-    const token = jwt.sign({ employeeId: employee.id }, jwtSecret, { expiresIn: '8h' })
+    const token = jwt.sign({ employeeId: employee.id, foo: 'bar' }, jwtSecret, { expiresIn: '8h' })
 
     // Set cookie safely for dev and prod
     res.cookie('token', token, {
