@@ -19,7 +19,7 @@ test('Login with valid credentials', async () => {
     data: { name: 'Test Employee', pin: '1234', locationId: location.id },
   })
 
-  const token = jwt.sign({ locationId: location.id }, process.env.JWT_SECRET!)
+  const token = jwt.sign({ locationId: location.id }, 'supersecretkey')
 
   const res = await request(app)
     .post(`/v1/location/${location.id}/auth/login`)
@@ -44,7 +44,7 @@ test('Login with invalid PIN', async () => {
   await prisma.employee.create({
     data: { name: 'Test Employee', pin: '1234', locationId: location.id },
   })
-  const token = jwt.sign({ locationId: location.id }, process.env.JWT_SECRET!)
+  const token = jwt.sign({ locationId: location.id }, 'supersecretkey')
   const res = await request(app)
     .post(`/v1/location/${location.id}/auth/login`)
     .set('Authorization', `Bearer ${token}`)
@@ -60,7 +60,7 @@ test('Login with invalid PIN', async () => {
 
 describe('Auth Middleware', () => {
   it('calls next() when token is valid', () => {
-    const token = jwt.sign({ employeeId: 1 }, process.env.JWT_SECRET!)
+    const token = jwt.sign({ employeeId: 1 }, 'supersecretkey')
     const req = {
       headers: { authorization: `Bearer ${token}` },
     } as Partial<Request>
