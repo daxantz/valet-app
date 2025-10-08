@@ -15,6 +15,7 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: Callofduty2497
           POSTGRES_DB: valetapptest
+         
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -49,4 +50,5 @@ jobs:
         env:
           NODE_ENV: test
           DATABASE_URL: postgres://postgres:Callofduty2497@localhost:5433/valetapptest
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: npm test
