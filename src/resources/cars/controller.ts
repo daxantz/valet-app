@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
-import { getAllCarsByEntrance, deleteCar } from '../../services/carService'
+import { getAllCarsByEntrance, deleteCar, getCarById } from '../../services/carService'
+
 const getCars = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { entranceId } = req.params
@@ -33,4 +34,24 @@ const removeCar = async (req: Request, res: Response, next: NextFunction) => {
   }
 }
 
-export default { getCars, removeCar }
+const getSingleCar = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id, entranceId } = req.params
+    if (!id) {
+      return res.status(400).json({ message: 'Car ID is required' })
+    }
+    if (!entranceId) {
+      return res.status(400).json({ message: 'Entrance ID is required' })
+    }
+    const car = await getCarById(parseInt(id), parseInt(entranceId))
+    if (!car) {
+      return res.status(404).json({ message: `Car with id: ${id} not found` })
+    }
+    // logic to get a single car by ID
+    res.status(200).json({ message: `retrieved car with id: ${id}`, car: car })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export default { getCars, removeCar, getSingleCar }

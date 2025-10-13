@@ -55,3 +55,22 @@ test('DELETE /v1/location/:locationId/entrance/:entranceId/car/:id deletes a car
   const carInDb = await prisma.car.findUnique({ where: { id: car.id } })
   expect(carInDb).toBeNull()
 })
+
+test('GET /v1/location/:locationId/entrance/:entranceId/car/:id retrieves a single car', async () => {
+  // Create a location, entrance, and a car
+  const location = await prisma.location.create({ data: { name: 'Test Location - get single car' } })
+  const entrance = await prisma.entrance.create({
+    data: { name: 'Back Entrance', locationId: location.id },
+  })
+  const car = await prisma.car.create({
+    data: { ticket: 'TICKET4', phoneNumber: '6666666666', entranceId: entrance.id, make: 'Chevy', color: 'White' },
+  })
+
+  const res = await request(app).get(`/v1/location/${location.id}/entrance/${entrance.id}/car/${car.id}`)
+
+  expect(res.status).toBe(200)
+  expect(res.body).toHaveProperty('message', `retrieved car with id: ${car.id}`)
+  expect(res.body.car).toHaveProperty('ticket', 'TICKET4')
+  expect(res.body.car).toHaveProperty('make', 'Chevy')
+  expect(res.body.car).toHaveProperty('color', 'White')
+})

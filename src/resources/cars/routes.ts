@@ -8,6 +8,6 @@ router.get('/', carController.getCars)
 // router.get('/', carController.getCars)
 router.delete('/:id', carController.removeCar)
 // router.get('/', entranceController.getEntrancesByLocation)
-// router.get('/:id', entranceController.getSingleEntrance)
+router.get('/:id', carController.getSingleCar)
 // router.put('/:id', entranceController.updateEntrance)
 export default router

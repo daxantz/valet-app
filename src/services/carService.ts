@@ -54,10 +54,10 @@ export const getAllCarsByEntrance = async (entranceId: number): Promise<Car[]> =
 /**
  * Get a single car by ID
  */
-export const getCarById = async (id: number): Promise<Car | null> => {
+export const getCarById = async (id: number, entranceId: number): Promise<Car | null> => {
   try {
     return await prisma.car.findUnique({
-      where: { id },
+      where: { id, entrance: { id: entranceId } },
       include: { images: true, parkedBy: true, checkedOutBy: true },
     })
   } catch (err) {
