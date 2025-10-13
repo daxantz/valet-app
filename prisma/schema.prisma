@@ -38,6 +38,7 @@ model Entrance {
   name       String
   location   Location @relation(fields: [locationId], references: [id])
   locationId Int
+  cars       Car[]
 }
 
 model Employee{
@@ -54,21 +55,30 @@ model Car {
   id             Int       @id @default(autoincrement())
   ticket         String    @unique
   phoneNumber    String
-  make           String
-  model          String
-  color          String
+  make           String?
+  color          String?
   status         CarStatus @default(PARKED)
   requestedAt    DateTime?
   readyAt        DateTime?
   checkedOutAt   DateTime?
-
   parkedById     Int?
   parkedBy       Employee? @relation("ParkedCars", fields: [parkedById], references: [id], onDelete: SetNull)
-
   checkedOutById Int?
   checkedOutBy   Employee? @relation("CheckedOutCars", fields: [checkedOutById], references: [id], onDelete: SetNull)
-
+  images         CarImage[]
+  entrance      Entrance  @relation(fields: [entranceId], references: [id])
+  entranceId    Int
   createdAt DateTime @default(now())
-updatedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt
 }
+
+model CarImage {
+  id     Int    @id @default(autoincrement())
+  url    String
+  car    Car    @relation(fields: [carId], references: [id])
+  carId  Int
+  
+  createdAt DateTime @default(now())
+}
+
 
