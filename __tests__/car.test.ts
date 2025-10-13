@@ -35,3 +35,23 @@ test('GET /v1/location/:locationId/entrance/:entranceId/car retrieves cars for a
   expect(tickets).toContain('TICKET1')
   expect(tickets).toContain('TICKET2')
 })
+
+test('DELETE /v1/location/:locationId/entrance/:entranceId/car/:id deletes a car', async () => {
+  // Create a location, entrance, and a car
+  const location = await prisma.location.create({ data: { name: 'Test Location - delete car' } })
+  const entrance = await prisma.entrance.create({
+    data: { name: 'Side Entrance', locationId: location.id },
+  })
+  const car = await prisma.car.create({
+    data: { ticket: 'TICKET3', phoneNumber: '5555555555', entranceId: entrance.id, make: 'Ford', color: 'Black' },
+  })
+
+  const res = await request(app).delete(`/v1/location/${location.id}/entrance/${entrance.id}/car/${car.id}`)
+
+  expect(res.status).toBe(200)
+  expect(res.body).toHaveProperty('message', `deleted car with id: ${car.id}`)
+
+  // Verify it no longer exists in the DB
+  const carInDb = await prisma.car.findUnique({ where: { id: car.id } })
+  expect(carInDb).toBeNull()
+})
