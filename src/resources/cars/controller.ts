@@ -1,0 +1,36 @@
+import { Request, Response, NextFunction } from 'express'
+import { getAllCarsByEntrance, deleteCar } from '../../services/carService'
+const getCars = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { entranceId } = req.params
+    if (!entranceId) {
+      return res.status(400).json({ message: 'Entrance ID is required' })
+    }
+    // Call service method to get cars by entranceId
+    const cars = await getAllCarsByEntrance(parseInt(entranceId))
+    // logic to get all cars
+    res.status(200).json({ message: `retrieved all cars from entrance: ${entranceId}`, cars: cars })
+  } catch (error) {
+    next(error)
+  }
+}
+
+const removeCar = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id, entranceId } = req.params
+    if (!entranceId) {
+      return res.status(400).json({ message: 'Entrance ID is required' })
+    }
+    if (!id) {
+      return res.status(400).json({ message: 'Car ID is required' })
+    }
+    const car = await deleteCar(parseInt(id), parseInt(entranceId))
+
+    // logic to delete a car by ID
+    res.status(200).json({ message: `deleted car with id: ${car.id}` })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export default { getCars, removeCar }
