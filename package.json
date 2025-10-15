@@ -27,6 +27,8 @@
   "author": "Your Name",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.908.0",
+    "@aws-sdk/s3-request-presigner": "^3.908.0",
     "@prisma/client": "^6.16.2",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.7",
@@ -35,6 +37,8 @@
     "express": "^4.19.2",
     "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
+    "multer": "^2.0.2",
+    "multer-s3": "^3.0.1",
     "pg": "^8.16.3",
     "pino": "^8.19.0"
   },
@@ -44,6 +48,7 @@
     "@types/express": "^4.17.21",
     "@types/jest": "^30.0.0",
     "@types/jsonwebtoken": "^9.0.10",
+    "@types/multer": "^2.0.0",
     "@types/node": "^20.11.30",
     "@types/supertest": "^6.0.3",
     "@typescript-eslint/eslint-plugin": "^7.3.1",
