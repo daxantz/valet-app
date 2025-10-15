@@ -1,5 +1,10 @@
 import { Request, Response, NextFunction } from 'express'
-import { getAllCarsByEntrance, deleteCar, getCarById } from '../../services/carService'
+import { getAllCarsByEntrance, deleteCar, getCarById, makeCar } from '../../services/carService'
+import prisma from '../../services/prisma'
+
+interface S3File extends Express.Multer.File {
+  location: string // S3 URL
+}
 
 const getCars = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -54,4 +59,32 @@ const getSingleCar = async (req: Request, res: Response, next: NextFunction) => 
   }
 }
 
-export default { getCars, removeCar, getSingleCar }
+const createCar = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { ticket, phoneNumber, make, color } = req.body
+    const { entranceId } = req.params
+    if (!entranceId) {
+      return res.status(400).json({ message: 'Entrance ID is required' })
+    }
+
+    if (!ticket || !phoneNumber) {
+      return res.status(400).json({ message: 'Ticket and Phone Number are required' })
+    }
+
+    const imageUrls = (req.files as S3File[]).map((file) => file.location)
+    //check to see if ticket exits
+    const existingTicket = await prisma.car.findFirst({ where: { ticket } })
+
+    if (existingTicket) {
+      return res.status(400).json({ message: `Duplicate ticket number: ${ticket}` })
+    }
+    // Call service method to create a new car
+    const car = await makeCar(ticket, phoneNumber, parseInt(entranceId), { make, color, imageUrls })
+
+    res.status(201).json({ message: 'Car created successfully', car: car })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export default { getCars, removeCar, getSingleCar, createCar }
