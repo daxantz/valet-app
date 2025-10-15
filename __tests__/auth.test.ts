@@ -7,6 +7,7 @@ import authenticate from '../src/middlewares/authenicated'
 import { Request, Response, NextFunction } from 'express'
 
 beforeEach(async () => {
+  await prisma.carImage.deleteMany()
   await prisma.car.deleteMany()
   await prisma.entrance.deleteMany()
   await prisma.employee.deleteMany()
