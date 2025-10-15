@@ -4,26 +4,32 @@ import { Car, CarStatus } from '@prisma/client'
 /**
  * Create a new car
  */
-export const createCar = async (
+export const makeCar = async (
   ticket: string,
   phoneNumber: string,
   entranceId: number,
-  locationData: {
+  optionalData: {
     make?: string
     color?: string
+    imageUrls?: string[]
   },
 ): Promise<Car> => {
   try {
-    const { make, color } = locationData
+    const { make, color, imageUrls } = optionalData
+
     const car = await prisma.car.create({
       data: {
         ticket,
         phoneNumber,
         make,
         color,
+        images: {
+          create: imageUrls?.map((url) => ({ url })) || [],
+        },
         entrance: { connect: { id: entranceId } },
       },
     })
+
     return car
   } catch (err) {
     console.error('Error in createCar:', err)
