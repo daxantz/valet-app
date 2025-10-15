@@ -2,6 +2,7 @@ import request from 'supertest'
 import app from '../src/app'
 import prisma from '../src/services/prisma'
 import { Car } from '@prisma/client'
+import path from 'path'
 
 beforeEach(async () => {
   // Clear tables with foreign keys first
@@ -73,4 +74,39 @@ test('GET /v1/location/:locationId/entrance/:entranceId/car/:id retrieves a sing
   expect(res.body.car).toHaveProperty('ticket', 'TICKET4')
   expect(res.body.car).toHaveProperty('make', 'Chevy')
   expect(res.body.car).toHaveProperty('color', 'White')
+})
+
+test('POST /v1/location/:locationId/entrance/:entranceId/car creates a new car', async () => {
+  const imagePath = path.join(__dirname, 'fixtures', 'kia-k4.jpg')
+  // Create a location and entrance
+  const location = await prisma.location.create({ data: { name: 'Test Location - create car' } })
+  const entrance = await prisma.entrance.create({
+    data: { name: 'Front Entrance', locationId: location.id },
+  })
+
+  const newCarData = {
+    ticket: 'TICKET5',
+    phoneNumber: '7777777777',
+    make: 'Nissan',
+    color: 'Green',
+  }
+
+  const res = await request(app)
+    .post(`/v1/location/${location.id}/entrance/${entrance.id}/car`)
+    .field('ticket', newCarData.ticket)
+    .field('phoneNumber', newCarData.phoneNumber)
+    .field('make', newCarData.make)
+    .field('color', newCarData.color)
+    .attach('images', imagePath)
+
+  expect(res.status).toBe(201)
+  expect(res.body).toHaveProperty('message', 'Car created successfully')
+  expect(res.body.car).toHaveProperty('ticket', 'TICKET5')
+  expect(res.body.car).toHaveProperty('make', 'Nissan')
+  expect(res.body.car).toHaveProperty('color', 'Green')
+
+  // Verify it exists in the DB
+  const carInDb = await prisma.car.findUnique({ where: { ticket: 'TICKET5' } })
+  expect(carInDb).not.toBeNull()
+  expect(carInDb).toHaveProperty('id', carInDb?.id)
 })
