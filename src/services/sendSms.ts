@@ -9,13 +9,11 @@ const client = twilio(accountSid, authToken)
 
 export const sendSms = async (to: string, body: string): Promise<void> => {
   try {
-    const message = await client.messages.create({
+    await client.messages.create({
       body,
       from: fromPhoneNumber!,
       to,
     })
-    console.log(`SMS sent to ${to}`)
-    console.log(message.body)
   } catch (error) {
     console.error('Error sending SMS:', error)
     throw error
